@@ -22,3 +22,22 @@ typedef int compar_t (const void *, const void *, void *);
 #define COMPAR(x, y, arg) compar ((x), (y), (arg))
 
 #include "patience-sort.include.c"
+
+void
+patience_sort_indices_r (void *base, size_t nmemb, size_t size,
+                         int (*compar) (const void *,
+                                        const void *,
+                                        void *),
+                         void *arg, size_t *result)
+{
+  sort (base, nmemb, size, compar, arg, result, NULL);
+}
+
+void
+patience_sort_r (void *base, size_t nmemb, size_t size,
+                 int (*compar) (const void *, const void *,
+                                void *),
+                 void *arg, void *result)
+{
+  sort (base, nmemb, size, compar, arg, NULL, result);
+}

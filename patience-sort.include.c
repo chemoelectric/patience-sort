@@ -16,12 +16,24 @@
   <https://www.gnu.org/licenses/>.
 */
 
+#include <stdio.h>
+#include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
+#include <inttypes.h>
 
 #define LINK_NIL ((size_t) 0)
 #define VALUE 0
 #define LINK  1
+
+#define LEN_THRESHOLD   128
+#define PILES_SIZE      128
+#define LINKS_SIZE      128
+#define WORKSPACE_SIZE  512
+
+_Static_assert (PILES_SIZE == LEN_THRESHOLD, "bad constants");
+_Static_assert (LINKS_SIZE == LEN_THRESHOLD, "bad constants");
+_Static_assert (WORKSPACE_SIZE == 4 * LEN_THRESHOLD, "bad constants");
 
 static size_t
 next_power_of_two (size_t i)
@@ -34,7 +46,7 @@ next_power_of_two (size_t i)
 }
 
 static size_t
-find_pile (void *base, size_t size, const compar_t *compar,
+find_pile (void *base, size_t size, compar_t *compar,
            void *arg, size_t num_piles, const size_t *piles,
            size_t q)
 {
@@ -99,7 +111,7 @@ find_pile (void *base, size_t size, const compar_t *compar,
 }
 
 static size_t
-find_last_elem (void *base, size_t size, const compar_t *compar,
+find_last_elem (void *base, size_t size, compar_t *compar,
                 void *arg, size_t num_piles, const size_t *last_elems,
                 size_t q)
 {
@@ -164,7 +176,7 @@ find_last_elem (void *base, size_t size, const compar_t *compar,
 }
 
 static void
-patience_sort_deal (void *base, size_t size, const compar_t *compar,
+patience_sort_deal (void *base, size_t size, compar_t *compar,
                     void *arg, size_t *num_piles,
                     size_t *piles, size_t *links,
                     size_t *last_elems, size_t *tails)
@@ -266,7 +278,7 @@ find_opponent (size_t i)
 }
 
 static size_t
-play_game (void *base, size_t size, const compar_t *compar,
+play_game (void *base, size_t size, compar_t *compar,
            void *arg, size_t i, size_t j,
            size_t winner_i, size_t winner_j)
 {
@@ -290,7 +302,7 @@ play_game (void *base, size_t size, const compar_t *compar,
 }
 
 static void
-build_tree (void *base, size_t size, const compar_t *compar,
+build_tree (void *base, size_t size, compar_t *compar,
             void *arg, size_t total_external_nodes, size_t *winners)
 {
   for (size_t istart = total_external_nodes;
@@ -332,7 +344,7 @@ build_tree (void *base, size_t size, const compar_t *compar,
 }
 
 static void
-replay_games (void *base, size_t size, const compar_t *compar,
+replay_games (void *base, size_t size, compar_t *compar,
               void *arg, size_t *winners, size_t i)
 {
   while (i != 1)
@@ -353,7 +365,7 @@ replay_games (void *base, size_t size, const compar_t *compar,
 
 static void
 merge (void *base, size_t nmemb, size_t size,
-       const compar_t *compar, void *arg,
+       compar_t *compar, void *arg,
        size_t *piles, const size_t *links,
        size_t total_nodes, size_t *winners,
        size_t *indices, void *elements)
@@ -383,7 +395,7 @@ merge (void *base, size_t nmemb, size_t size,
 
 static void
 k_way_merge (void *base, size_t nmemb, size_t size,
-             const compar_t *compar, void *arg,
+             compar_t *compar, void *arg,
              size_t num_piles, size_t *piles,
              const size_t *links, size_t *winners,
              size_t *indices, void *elements)
@@ -414,4 +426,93 @@ k_way_merge (void *base, size_t nmemb, size_t size,
   build_tree (base, size, compar, arg, total_external_nodes, winners);
   merge (base, nmemb, size, compar, arg, piles, links,
          total_nodes, winners, indices, elements);
+}
+
+static void *
+xmalloc (size_t n)
+{
+  void *p = malloc (n);
+  if (p == NULL)
+    {
+      fprintf
+        (stderr,
+         "Memory exhausted while trying to allocate %zd bytes.\n",
+         n);
+      exit (1);
+    }
+  return p;
+}
+
+static void
+sort (void *base, size_t nmemb, size_t size,
+      compar_t *compar, void *arg,
+      size_t *indices, void *elements)
+{
+  if (nmemb == 0)
+    {
+      /* Do nothing. */
+    }
+  else if (nmemb <= LEN_THRESHOLD)
+    {
+      /* Use stack storage. */
+
+      size_t piles[PILES_SIZE];
+      size_t links[LINKS_SIZE];
+      size_t workspace[WORKSPACE_SIZE];
+
+      size_t *const last_elems = workspace;
+      size_t *const tails = workspace + nmemb;
+
+      size_t num_piles;
+
+      patience_sort_deal (base, size, compar, arg,
+                          &num_piles, piles, links,
+                          last_elems, tails);
+
+      size_t *const winners = workspace;
+
+      k_way_merge (base, nmemb, size, compar, arg,
+                   num_piles, piles, links, winners,
+                   indices, elements);
+    }
+  else
+    {
+      /* Use malloc storage. */
+
+      size_t *piles = xmalloc (nmemb * sizeof (size_t));
+      size_t *links = xmalloc (nmemb * sizeof (size_t));
+      size_t *workspace = xmalloc (2 * nmemb * sizeof (size_t));
+
+      size_t *const last_elems = workspace;
+      size_t *const tails = workspace + nmemb;
+
+      size_t num_piles;
+
+      patience_sort_deal (base, size, compar, arg,
+                          &num_piles, piles, links,
+                          last_elems, tails);
+
+      const size_t power = next_power_of_two (num_piles);
+
+      if (4 * power <= 2 * nmemb)
+        {
+          size_t *const winners = workspace;
+          k_way_merge (base, nmemb, size, compar, arg,
+                       num_piles, piles, links, winners,
+                       indices, elements);
+          free (workspace);
+        }
+      else
+        {
+          free (workspace);
+          size_t *winners = xmalloc (4 * power * sizeof (size_t));
+          k_way_merge (base, nmemb, size, compar, arg,
+                       num_piles, piles, links, winners,
+                       indices, elements);
+          free (winners);
+        }
+
+      free (piles);
+      free (links);
+    }
 }
