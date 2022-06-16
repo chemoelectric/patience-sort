@@ -175,8 +175,8 @@ find_last_elem (void *base, size_t size, compar_t *compar,
 }
 
 static void
-patience_sort_deal (void *base, size_t size, compar_t *compar,
-                    void *arg, size_t *num_piles,
+patience_sort_deal (void *base, size_t nmemb, size_t size,
+                    compar_t *compar, void *arg, size_t *num_piles,
                     size_t *piles, size_t *links,
                     size_t *last_elems, size_t *tails)
 {
@@ -203,19 +203,21 @@ patience_sort_deal (void *base, size_t size, compar_t *compar,
   memset (tails, LINK_NIL, size * sizeof (size_t));
   size_t m = 0;
 
-  for (size_t q = size; q != 0; q -= 1)
+  for (size_t q = nmemb; q != 0; q -= 1)
     {
       const size_t i = find_pile (base, size, compar, arg,
                                   m, piles, q);
       if (i == m + 1)
         {
+/* FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME */
           const size_t i = find_last_elem (base, size, compar, arg,
                                            m, last_elems, q);
+/* FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME */
           if (i == m + 1)
             {                   /* Start a new pile. */
-              piles[i - 1] = q;
-              last_elems[i - 1] = q;
-              tails[i - 1] = q;
+              piles[m] = q;
+              last_elems[m] = q;
+              tails[m] = q;
               m += 1;
             }
           else
@@ -267,7 +269,7 @@ discard_top_of_each_pile (size_t num_piles, size_t *piles,
                           const size_t *links)
 {
   for (size_t i = 0; i != num_piles; i += 1)
-    piles[i] = links[piles[i]];
+    piles[i] = links[piles[i] - 1];
 }
 
 static inline size_t
@@ -435,7 +437,7 @@ xmalloc (size_t n)
     {
       fprintf
         (stderr,
-         "Memory exhausted while trying to allocate %zd bytes.\n",
+         "Memory exhausted while trying to allocate %zu bytes.\n",
          n);
       exit (1);
     }
@@ -464,7 +466,7 @@ sort_out_of_place (void *base, size_t nmemb, size_t size,
 
       size_t num_piles;
 
-      patience_sort_deal (base, size, compar, arg,
+      patience_sort_deal (base, nmemb, size, compar, arg,
                           &num_piles, piles, links,
                           last_elems, tails);
 
@@ -487,7 +489,7 @@ sort_out_of_place (void *base, size_t nmemb, size_t size,
 
       size_t num_piles;
 
-      patience_sort_deal (base, size, compar, arg,
+      patience_sort_deal (base, nmemb, size, compar, arg,
                           &num_piles, piles, links,
                           last_elems, tails);
 
@@ -521,7 +523,7 @@ sort (void *base, size_t nmemb, size_t size,
       compar_t *compar, void *arg,
       size_t *indices, void *elements)
 {
-  if (base != NULL && elements == base)
+  if (elements == base)
     {
       /* Fake an in-place sort. */
       if (nmemb * size <= LEN_THRESHOLD * sizeof (size_t))

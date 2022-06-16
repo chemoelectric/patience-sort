@@ -16,53 +16,124 @@
   <https://www.gnu.org/licenses/>.
 */
 
+#include <assert.h>
 #include <stdio.h>
+#include <stdint.h>
+#include <stdlib.h>
 #include <patience-sort.h>
 
-/* (*------------------------------------------------------------------*) */
-/* (* A simple linear congruential generator.                          *) */
+/*------------------------------------------------------------------*/
+/* A simple linear congruential generator.                          */
 
-/* (* The multiplier lcg_a comes from Steele, Guy; Vigna, Sebastiano (28 */
-/*    September 2021). "Computationally easy, spectrally good multipliers */
-/*    for congruential pseudorandom number generators". */
-/*    arXiv:2001.05304v3 [cs.DS] *) */
-/* macdef lcg_a = $UN.cast{uint64} 0xf1357aea2e62a9c5LLU */
+/* The multiplier LCG_A comes from Steele, Guy; Vigna, Sebastiano (28
+   September 2021). "Computationally easy, spectrally good multipliers
+   for congruential pseudorandom number generators".
+   arXiv:2001.05304v3 [cs.DS] */
+#define LCG_A UINT64_C(0xf1357aea2e62a9c5)
 
-/* (* lcg_c must be odd. *) */
-/* macdef lcg_c = $UN.cast{uint64} 0xbaceba11beefbeadLLU */
+/* LCG_C must be odd. */
+#define LCG_C UINT64_C(0xbaceba11beefbead)
 
-/* var seed : uint64 = $UN.cast 0 */
-/* val p_seed = addr@ seed */
+uint64_t seed = 0;
 
-/* fn */
-/* random_double () :<!wrt> double = */
-/*   let */
-/*     val (pf, fpf | p_seed) = $UN.ptr0_vtake{uint64} p_seed */
-/*     val old_seed = ptr_get<uint64> (pf | p_seed) */
+static double
+random_double ()
+{
+  /* IEEE "binary64" or "double" has 52 bits of precision. We will
+     take the high 48 bits of the seed and divide it by 2**48, to get
+     a number 0.0 <= randnum < 1.0 */
+  const double high_48_bits = (double) (seed >> 16);
+  const double divisor = (double) (UINT64_C(1) << 48);
+  const double randnum = high_48_bits / divisor;
 
-/*     (* IEEE "binary64" or "double" has 52 bits of precision. We will */
-/*        take the high 48 bits of the seed and divide it by 2**48, to */
-/*        get a number 0.0 <= randnum < 1.0 *) */
-/*     val high_48_bits = $UN.cast{double} (old_seed >> 16) */
-/*     val divisor = $UN.cast{double} (1LLU << 48) */
-/*     val randnum = high_48_bits / divisor */
+  /* The following operation is modulo 2**64, by virtue of standard C
+     behavior for uint64_t. */
+  seed = (LCG_A * seed) + LCG_C;
 
-/*     (* The following operation is modulo 2**64, by virtue of standard */
-/*        C behavior for uint64_t. *) */
-/*     val new_seed = (lcg_a * old_seed) + lcg_c */
+  return randnum;
+}
 
-/*     val () = ptr_set<uint64> (pf | p_seed, new_seed) */
-/*     prval () = fpf pf */
-/*   in */
-/*     randnum */
-/*   end */
+static int
+random_int (int m, int n)
+{
+  return m + (int) (random_double () * (n - m + 1));
+}
 
-/* fn */
-/* random_int (m : int, n : int) :<!wrt> int = */
-/*   m + $UN.cast{int} (random_double () * (n - m + 1)) */
+/*------------------------------------------------------------------*/
+
+#define MAX(x, y) (((x) < (y)) ? (y) : (x))
+
+static int
+intcmp (const void *px, const void *py)
+{
+  const int x = *((const int *) px);
+  const int y = *((const int *) py);
+  return ((x < y) ? -1 : ((x > y) ? 1 : 0));
+}
+
+static void
+test_random_arrays ()
+{
+  for (size_t sz = 0; sz <= 1000000; sz = MAX (1, 10 * sz))
+    {
+      int *p1 = malloc (sz * sizeof (int));
+      int *p2 = malloc (sz * sizeof (int));
+      int *p3 = malloc (sz * sizeof (int));
+
+      for (size_t i = 0; i < sz; i += 1)
+        p1[i] = random_int (1, 1000);
+      printf("p1 = ");for (size_t i = 0; i < sz; i += 1) printf("%d ", p1[i]);printf("\n");
+
+      for (size_t i = 0; i < sz; i += 1)
+        p2[i] = p1[i];
+      qsort (p2, sz, sizeof (int), intcmp);
+      printf("p2 = ");for (size_t i = 0; i < sz; i += 1) printf("%d ", p2[i]);printf("\n");
+
+      patience_sort (p1, sz, sizeof (int), intcmp, p3);
+      printf("p3 = ");for (size_t i = 0; i < sz; i += 1) printf("%d ", p3[i]);printf("\n");
+
+      for (size_t i = 0; i < sz; i += 1)
+        assert (p2[i] == p3[i]);
+
+      free (p1);
+      free (p2);
+      free (p3);
+    }
+}
+  /*       implement */
+  /*       array_quicksort$cmp<int> (x, y) = */
+  /*         if x < y then */
+  /*           ~1 */
+  /*         else if x > y then */
+  /*           1 */
+  /*         else */
+  /*           0 */
+
+  /*       implement */
+  /*       array_initize$init<int> (i, x) = */
+  /*         x := random_int (1, 1000) */
+
+  /*       val @(pf1, pfgc1 | p1) = array_ptr_alloc<int> sz */
+  /*       val () = array_initize<int> (!p1, sz) */
+
+  /*       val @(pf2, pfgc2 | p2) = array_ptr_alloc<int> sz */
+  /*       val () = array_copy<int> (!p2, !p1, sz) */
+  /*       val () = array_quicksort<int> (!p2, sz) */
+  /*       val lst2 = list_vt2t (array2list (!p2, sz)) */
+
+  /*       val @(pf3, pfgc3 | p3) = patience_sort<int> (!p1, sz) */
+  /*       val lst3 = list_vt2t (array2list (!p3, sz)) */
+  /*     in */
+  /*       assertloc (lst2 = lst3); */
+  /*       array_ptr_free (pf1, pfgc1 | p1); */
+  /*       array_ptr_free (pf2, pfgc2 | p2); */
+  /*       array_ptr_free (pf3, pfgc3 | p3) */
+  /*     end */
+  /* end */
 
 int
 main (int argc, char *argv[])
 {
+  test_random_arrays ();
   return 0;
 }
