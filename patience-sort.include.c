@@ -20,7 +20,6 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
-#include <inttypes.h>
 
 #define LINK_NIL ((size_t) 0)
 #define VALUE 0
