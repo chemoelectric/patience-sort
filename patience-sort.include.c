@@ -332,12 +332,61 @@ build_tree (void *base, size_t size, const compar_t *compar,
 }
 
 static void
+replay_games (void *base, size_t size, const compar_t *compar,
+              void *arg, size_t *winners, size_t i)
+{
+  while (i != 1)
+    {
+      const size_t j = find_opponent (i);
+      const size_t iwinner =
+        play_game (base, size, compar, arg, i, j,
+                   winners_get (winners, VALUE, i),
+                   winners_get (winners, VALUE, j));
+      const size_t i2 = (i >> 1);
+      winners_set (winners, VALUE, i2,
+                   winners_get (winners, VALUE, iwinner));
+      winners_set (winners, LINK, i2,
+                   winners_get (winners, LINK, iwinner));
+      i = i2;
+    }
+}
+
+static void
+merge (void *base, size_t nmemb, size_t size,
+       const compar_t *compar, void *arg,
+       size_t *piles, const size_t *links,
+       size_t total_nodes, size_t *winners,
+       size_t *indices, void *elements)
+{
+  for (size_t isorted = 0; isorted != nmemb; isorted += 1)
+    {
+      const size_t winner = winners_get (winners, VALUE, 1);
+      if (indices != NULL)
+        indices[isorted] = winner - 1;
+      if (elements != NULL)
+        memcpy ((char *) elements + isorted * size,
+                (char *) base + (winner - 1) * size,
+                size);
+
+      /* Move to the next element in the winner’s pile. */
+      const size_t ilink = winners_get (winners, LINK, 1);
+      const size_t inext = piles[ilink - 1];
+      if (inext != LINK_NIL)
+        piles[ilink - 1] = links[inext - 1];
+
+      /* Replay games, with the new element as a competitor. */
+      const size_t i = (total_nodes >> 1) + ilink;
+      winners_set (winners, VALUE, i, inext);
+      replay_games (base, size, compar, arg, winners, i);
+    }
+}
+
+static void
 k_way_merge (void *base, size_t nmemb, size_t size,
              const compar_t *compar, void *arg,
              size_t num_piles, size_t *piles,
              const size_t *links, size_t *winners,
-             size_t *indices, size_t n_indices,
-             void *elements, size_t n_elements)
+             size_t *indices, void *elements)
 {
   /*
     k-way merge by tournament tree.
@@ -363,5 +412,6 @@ k_way_merge (void *base, size_t nmemb, size_t size,
   init_competitors (total_external_nodes, winners, num_piles, piles);
   discard_top_of_each_pile (num_piles, piles, links);
   build_tree (base, size, compar, arg, total_external_nodes, winners);
-
+  merge (base, nmemb, size, compar, arg, piles, links,
+         total_nodes, winners, indices, elements);
 }
