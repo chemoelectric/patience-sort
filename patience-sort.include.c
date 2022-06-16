@@ -16,6 +16,10 @@
   <https://www.gnu.org/licenses/>.
 */
 
+#include <string.h>
+
+#define LINK_NIL ((size_t) 0)
+
 static size_t
 next_power_of_two (size_t i)
 {
@@ -154,4 +158,66 @@ find_last_elem (void *base, size_t size, const compar_t *compar,
     }
 
   return retval;
+}
+
+static void
+patience_sort_deal (void *base, size_t size, const compar_t *compar,
+                    void *arg, size_t *num_piles,
+                    size_t *piles, size_t *links,
+                    size_t *last_elems, size_t *tails)
+{
+  /*
+
+    I borrow, from the following paper, the trick of building on both
+    sides of a pile:
+
+      Badrish Chandramouli and Jonathan Goldstein, ‘Patience is a
+        virtue: revisiting merge and sort on modern processors’,
+        SIGMOD ’14: Proceedings of the 2014 ACM SIGMOD International
+        Conference on Management of Data, June 2014, 731–742.
+        https://doi.org/10.1145/2588555.2593662
+
+    Dealing is done backwards through the arr array, so an array
+    already sorted in the desired order will result in a single pile
+    with just consing.
+
+  */
+
+  memset (piles, LINK_NIL, size * sizeof (size_t));
+  memset (links, LINK_NIL, size * sizeof (size_t));
+  memset (last_elems, LINK_NIL, size * sizeof (size_t));
+  memset (tails, LINK_NIL, size * sizeof (size_t));
+  size_t m = 0;
+
+  for (size_t q = size; q != 0; q -= 1)
+    {
+      const size_t i = find_pile (base, size, compar, arg,
+                                  m, piles, q);
+      if (i == m + 1)
+        {
+          const size_t i = find_last_elem (base, size, compar, arg,
+                                           m, last_elems, q);
+          if (i == m + 1)
+            {                   /* Start a new pile. */
+              piles[i - 1] = q;
+              last_elems[i - 1] = q;
+              tails[i - 1] = q;
+              m += 1;
+            }
+          else
+            {                   /* Append to the end of a pile. */
+              const size_t i0 = tails[i - 1];
+              links[i0 - 1] = q;
+              last_elems[i - 1] = q;
+              tails[i - 1] = q;
+            }
+        }
+      else
+        {                     /* Cons onto the beginning of a pile. */
+          links[q - 1] = piles[i - 1];
+          piles[i - 1] = q;
+        }
+    }
+
+  *num_piles = m;
 }
