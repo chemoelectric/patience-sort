@@ -17,3 +17,10 @@
 */
 
 #include <patience-sort.h>
+
+typedef int compar_t (const void *, const void *, void *);
+
+#define COMPAR(x, y, arg) compar ((x), (y), (arg))
+#define FIND_PILE find_pile_r
+
+#include "patience-sort.include.c"

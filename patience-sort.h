@@ -18,6 +18,18 @@
 
 #include <stddef.h>
 
+void patience_sort_indices (void *base, size_t nmemb, size_t size,
+                            int (*compar) (const void *,
+                                           const void *),
+                            size_t *result);
+
+void patience_sort_indices_r (void *base, size_t nmemb, size_t size,
+                              int (*compar) (const void *,
+                                             const void *,
+                                             void *),
+                              void *arg,
+                              size_t *result);
+
 void patience_sort (void *base, size_t nmemb, size_t size,
                     int (*compar) (const void *, const void *),
                     void *result);

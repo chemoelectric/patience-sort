@@ -83,7 +83,10 @@ escape = $(subst $$,\$$,$(subst ^,\^,$(subst ],\],$(subst [,\[,$(subst .,\.,$(su
 lib_LTLIBRARIES += libpatience-sort.la
 libpatience_sort_la_SOURCES =
 libpatience_sort_la_SOURCES += patience-sort.c
+libpatience_sort_la_SOURCES += patience-sort-r.c
 libpatience_sort_la_SOURCES += patience-sort.h
+dist_libpatience_sort_la_DEPENDENCIES =
+dist_libpatience_sort_la_DEPENDENCIES += patience-sort.include.c
 
 # PATIENCE_SORT_SATS = patience-sort/SATS/patience-sort.sats
 # PATIENCE_SORT_SATS_C = patience-sort/SATS/patience-sort_sats.c

@@ -21,7 +21,7 @@
 AC_PREREQ([2.71])
 AC_INIT([patience-sort],[1.0.0],[],[patience-sort],[])
 
-AC_CONFIG_SRCDIR([patience-sort.c])
+AC_CONFIG_SRCDIR([patience-sort.include.c])
 
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_AUX_DIR([build-aux])
