@@ -444,9 +444,9 @@ xmalloc (size_t n)
 }
 
 static void
-sort (void *base, size_t nmemb, size_t size,
-      compar_t *compar, void *arg,
-      size_t *indices, void *elements)
+sort_out_of_place (void *base, size_t nmemb, size_t size,
+                   compar_t *compar, void *arg,
+                   size_t *indices, void *elements)
 {
   if (nmemb == 0)
     {
@@ -515,4 +515,33 @@ sort (void *base, size_t nmemb, size_t size,
       free (piles);
       free (links);
     }
+}
+
+static void
+sort (void *base, size_t nmemb, size_t size,
+      compar_t *compar, void *arg,
+      size_t *indices, void *elements)
+{
+  if (base != NULL && elements == base)
+    {
+      /* Fake an in-place sort. */
+      if (nmemb * size <= LEN_THRESHOLD * sizeof (size_t))
+        {
+          char buffer[nmemb * size];
+          sort_out_of_place (base, nmemb, size, compar, arg,
+                             indices, buffer);
+          memcpy (elements, buffer, nmemb * size);
+        }
+      else
+        {
+          void *buffer = xmalloc (nmemb * size);
+          sort_out_of_place (base, nmemb, size, compar, arg,
+                             indices, buffer);
+          memcpy (elements, buffer, nmemb * size);
+          free (buffer);
+        }
+    }
+  else
+    sort_out_of_place (base, nmemb, size, compar, arg,
+                       indices, elements);
 }

@@ -39,5 +39,6 @@ patience_sort_r (void *base, size_t nmemb, size_t size,
                                 void *),
                  void *arg, void *result)
 {
-  sort (base, nmemb, size, compar, arg, NULL, result);
+  sort (base, nmemb, size, compar, arg, NULL,
+        (result != NULL) ? result : base);
 }
