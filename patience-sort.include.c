@@ -16,9 +16,12 @@
   <https://www.gnu.org/licenses/>.
 */
 
+#include <stdbool.h>
 #include <string.h>
 
 #define LINK_NIL ((size_t) 0)
+#define VALUE 0
+#define LINK  1
 
 static size_t
 next_power_of_two (size_t i)
@@ -220,4 +223,145 @@ patience_sort_deal (void *base, size_t size, const compar_t *compar,
     }
 
   *num_piles = m;
+}
+
+static inline size_t
+winners_get (const size_t *winners, int field, size_t i)
+{
+  return winners[i + i + field];
+}
+
+static inline void
+winners_set (size_t *winners, int field, size_t i, size_t x)
+{
+  winners[i + i + field] = x;
+}
+
+static void
+init_competitors (size_t total_external_nodes, size_t *winners,
+                  size_t num_piles, const size_t *piles)
+{
+  /* The top of each pile becomes a starting competitor. The LINK
+     field tells which pile a winner will have come from.  */
+  for (size_t i = 0; i != num_piles; i += 1)
+    {
+      winners_set (winners, VALUE, total_external_nodes + i,
+                   piles[i]);
+      winners_set (winners, LINK, total_external_nodes + i, i + 1);
+    }
+}
+
+static void
+discard_top_of_each_pile (size_t num_piles, size_t *piles,
+                          const size_t *links)
+{
+  for (size_t i = 0; i != num_piles; i += 1)
+    piles[i] = links[piles[i]];
+}
+
+static inline size_t
+find_opponent (size_t i)
+{
+  return (i ^ 1);
+}
+
+static size_t
+play_game (void *base, size_t size, const compar_t *compar,
+           void *arg, size_t i, size_t j,
+           size_t winner_i, size_t winner_j)
+{
+  size_t iwinner;
+
+  if (winner_i == LINK_NIL)
+    iwinner = j;
+  else if (winner_j == LINK_NIL)
+    iwinner = i;
+  else
+    {
+      const size_t i1 = winner_i - 1;
+      const size_t i2 = winner_j - 1;
+      const int cmp = COMPAR ((char *) base + i2 * size,
+                              (char *) base + i1 * size,
+                              arg);
+      iwinner = (cmp < 0) ? j : i;
+    }
+
+  return iwinner;
+}
+
+static void
+build_tree (void *base, size_t size, const compar_t *compar,
+            void *arg, size_t total_external_nodes, size_t *winners)
+{
+  for (size_t istart = total_external_nodes;
+       istart != 1;
+       istart >>= 1)
+    {
+      size_t i = istart;
+      bool done = false;
+      while (!done)
+        {
+          if (istart + istart <= i)
+            done = true;
+          else
+            {
+              const size_t winner_i = winners_get (winners, VALUE, i);
+              if (winner_i == LINK_NIL)
+                done = true;    /* There are no more competitors. */
+              else
+                {
+                  const size_t j = find_opponent (i);
+                  const size_t winner_j =
+                    winners_get (winners, VALUE, j);
+                  const size_t iwinner =
+                    play_game (base, size, compar, arg, i, j,
+                               winner_i, winner_j);
+                  const size_t i2 = (i >> 1);
+                  winners_set (winners, VALUE, i2,
+                               winners_get (winners, VALUE, iwinner));
+                  winners_set (winners, LINK, i2,
+                               winners_get (winners, LINK, iwinner));
+                  if (winner_j == LINK_NIL)
+                    done = true; /* There was no opponent. */
+                  else
+                    i += 2;
+                }
+            }
+        }
+    }
+}
+
+static void
+k_way_merge (void *base, size_t nmemb, size_t size,
+             const compar_t *compar, void *arg,
+             size_t num_piles, size_t *piles,
+             const size_t *links, size_t *winners,
+             size_t *indices, size_t n_indices,
+             void *elements, size_t n_elements)
+{
+  /*
+    k-way merge by tournament tree.
+
+    See Knuth, volume 3, and also
+    https://en.wikipedia.org/w/index.php?title=K-way_merge_algorithm&oldid=1047851465#Tournament_Tree
+
+    However, I store a winners tree instead of the recommended losers
+    tree. If the tree were stored as linked nodes, it would probably
+    be more efficient to store a losers tree. However, I am storing
+    the tree as an array, and one can find an opponent quickly by
+    simply toggling the least significant bit of a competitor's array
+    index.
+  */
+
+  const size_t total_external_nodes = next_power_of_two (num_piles);
+  const size_t total_nodes = (2 * total_external_nodes) - 1;
+  
+  /* We will ignore index 0 of the winners tree arrays. */
+  const size_t winners_size = total_nodes + 1;
+
+  memset (winners, LINK_NIL, 2 * winners_size * sizeof (size_t));
+  init_competitors (total_external_nodes, winners, num_piles, piles);
+  discard_top_of_each_pile (num_piles, piles, links);
+  build_tree (base, size, compar, arg, total_external_nodes, winners);
+
 }
