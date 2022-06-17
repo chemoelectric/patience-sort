@@ -16,7 +16,6 @@
   <https://www.gnu.org/licenses/>.
 */
 
-#include <assert.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -63,12 +62,34 @@ random_int (int m, int n)
 
 #define MAX(x, y) (((x) < (y)) ? (y) : (x))
 
+#define CHECK(expr)                             \
+  if (expr)                                     \
+    {}                                          \
+  else                                          \
+    check_failed (__FILE__, __LINE__)
+
+static void
+check_failed (const char *file, unsigned int line)
+{
+  fprintf (stderr, "CHECK failed at %s:%u\n", file, line);
+  exit (1);
+}
+
 static int
 intcmp (const void *px, const void *py)
 {
   const int x = *((const int *) px);
   const int y = *((const int *) py);
   return ((x < y) ? -1 : ((x > y) ? 1 : 0));
+}
+
+static int
+intcmp_r (const void *px, const void *py, void *reverse_order)
+{
+  const int x = *((const int *) px);
+  const int y = *((const int *) py);
+  const int cmp = ((x < y) ? -1 : ((x > y) ? 1 : 0));
+  return (*(int *) reverse_order) ? -cmp : cmp;
 }
 
 static void
@@ -90,7 +111,7 @@ test_random_arrays ()
       patience_sort (p1, sz, sizeof (int), intcmp, p3);
 
       for (size_t i = 0; i < sz; i += 1)
-        assert (p2[i] == p3[i]);
+        CHECK (p2[i] == p3[i]);
 
       free (p1);
       free (p2);
@@ -116,7 +137,7 @@ test_random_arrays_in_place ()
       patience_sort_in_place (p1, sz, sizeof (int), intcmp);
 
       for (size_t i = 0; i < sz; i += 1)
-        assert (p2[i] == p1[i]);
+        CHECK (p2[i] == p1[i]);
 
       free (p1);
       free (p2);
@@ -142,7 +163,177 @@ test_random_arrays_indices ()
       patience_sort_indices (p1, sz, sizeof (int), intcmp, p3);
 
       for (size_t i = 0; i < sz; i += 1)
-        assert (p2[i] == p1[p3[i]]);
+        CHECK (p2[i] == p1[p3[i]]);
+
+      free (p1);
+      free (p2);
+      free (p3);
+    }
+}
+
+static void
+test_random_arrays_r ()
+{
+  for (size_t sz = 0; sz <= 1000000; sz = MAX (1, 10 * sz))
+    {
+      int *p1 = malloc (sz * sizeof (int));
+      int *p2 = malloc (sz * sizeof (int));
+      int *p3 = malloc (sz * sizeof (int));
+
+      for (size_t i = 0; i < sz; i += 1)
+        p1[i] = random_int (1, 1000);
+
+      for (size_t i = 0; i < sz; i += 1)
+        p2[i] = p1[i];
+      qsort (p2, sz, sizeof (int), intcmp);
+
+      int reverse_order = 0;
+      patience_sort_r (p1, sz, sizeof (int), intcmp_r,
+                       &reverse_order, p3);
+
+      for (size_t i = 0; i < sz; i += 1)
+        CHECK (p2[i] == p3[i]);
+
+      free (p1);
+      free (p2);
+      free (p3);
+    }
+}
+
+static void
+test_random_arrays_r_reverse_order ()
+{
+  for (size_t sz = 0; sz <= 1000000; sz = MAX (1, 10 * sz))
+    {
+      int *p1 = malloc (sz * sizeof (int));
+      int *p2 = malloc (sz * sizeof (int));
+      int *p3 = malloc (sz * sizeof (int));
+
+      for (size_t i = 0; i < sz; i += 1)
+        p1[i] = random_int (1, 1000);
+
+      for (size_t i = 0; i < sz; i += 1)
+        p2[i] = p1[i];
+      qsort (p2, sz, sizeof (int), intcmp);
+
+      int reverse_order = 1;
+      patience_sort_r (p1, sz, sizeof (int), intcmp_r,
+                       &reverse_order, p3);
+
+      for (size_t i = 0; i < sz; i += 1)
+        CHECK (p2[i] == p3[sz - 1 - i]);
+
+      free (p1);
+      free (p2);
+      free (p3);
+    }
+}
+
+static void
+test_random_arrays_in_place_r ()
+{
+  for (size_t sz = 0; sz <= 1000000; sz = MAX (1, 10 * sz))
+    {
+      int *p1 = malloc (sz * sizeof (int));
+      int *p2 = malloc (sz * sizeof (int));
+
+      for (size_t i = 0; i < sz; i += 1)
+        p1[i] = random_int (1, 1000);
+
+      for (size_t i = 0; i < sz; i += 1)
+        p2[i] = p1[i];
+      qsort (p2, sz, sizeof (int), intcmp);
+
+      int reverse_order = 0;
+      patience_sort_in_place_r (p1, sz, sizeof (int), intcmp_r,
+                                &reverse_order);
+
+      for (size_t i = 0; i < sz; i += 1)
+        CHECK (p2[i] == p1[i]);
+
+      free (p1);
+      free (p2);
+    }
+}
+
+static void
+test_random_arrays_in_place_r_reverse_order ()
+{
+  for (size_t sz = 0; sz <= 1000000; sz = MAX (1, 10 * sz))
+    {
+      int *p1 = malloc (sz * sizeof (int));
+      int *p2 = malloc (sz * sizeof (int));
+
+      for (size_t i = 0; i < sz; i += 1)
+        p1[i] = random_int (1, 1000);
+
+      for (size_t i = 0; i < sz; i += 1)
+        p2[i] = p1[i];
+      qsort (p2, sz, sizeof (int), intcmp);
+
+      int reverse_order = 1;
+      patience_sort_in_place_r (p1, sz, sizeof (int), intcmp_r,
+                                &reverse_order);
+
+      for (size_t i = 0; i < sz; i += 1)
+        CHECK (p2[i] == p1[sz - 1 - i]);
+
+      free (p1);
+      free (p2);
+    }
+}
+
+static void
+test_random_arrays_indices_r ()
+{
+  for (size_t sz = 0; sz <= 1000000; sz = MAX (1, 10 * sz))
+    {
+      int *p1 = malloc (sz * sizeof (int));
+      int *p2 = malloc (sz * sizeof (int));
+      size_t *p3 = malloc (sz * sizeof (size_t));
+
+      for (size_t i = 0; i < sz; i += 1)
+        p1[i] = random_int (1, 1000);
+
+      for (size_t i = 0; i < sz; i += 1)
+        p2[i] = p1[i];
+      qsort (p2, sz, sizeof (int), intcmp);
+
+      int reverse_order = 0;
+      patience_sort_indices_r (p1, sz, sizeof (int), intcmp_r,
+                               &reverse_order, p3);
+
+      for (size_t i = 0; i < sz; i += 1)
+        CHECK (p2[i] == p1[p3[i]]);
+
+      free (p1);
+      free (p2);
+      free (p3);
+    }
+}
+
+static void
+test_random_arrays_indices_r_reverse_order ()
+{
+  for (size_t sz = 0; sz <= 1000000; sz = MAX (1, 10 * sz))
+    {
+      int *p1 = malloc (sz * sizeof (int));
+      int *p2 = malloc (sz * sizeof (int));
+      size_t *p3 = malloc (sz * sizeof (size_t));
+
+      for (size_t i = 0; i < sz; i += 1)
+        p1[i] = random_int (1, 1000);
+
+      for (size_t i = 0; i < sz; i += 1)
+        p2[i] = p1[i];
+      qsort (p2, sz, sizeof (int), intcmp);
+
+      int reverse_order = 1;
+      patience_sort_indices_r (p1, sz, sizeof (int), intcmp_r,
+                               &reverse_order, p3);
+
+      for (size_t i = 0; i < sz; i += 1)
+        CHECK (p2[i] == p1[p3[sz - 1 - i]]);
 
       free (p1);
       free (p2);
@@ -156,5 +347,11 @@ main (int argc, char *argv[])
   test_random_arrays ();
   test_random_arrays_in_place ();
   test_random_arrays_indices ();
+  test_random_arrays_r ();
+  test_random_arrays_r_reverse_order ();
+  test_random_arrays_in_place_r ();
+  test_random_arrays_in_place_r_reverse_order ();
+  test_random_arrays_indices_r ();
+  test_random_arrays_indices_r_reverse_order ();
   return 0;
 }
