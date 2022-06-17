@@ -24,21 +24,29 @@ typedef int compar_t (const void *, const void *, void *);
 #include "patience-sort.include.c"
 
 void
-patience_sort_indices_r (void *base, size_t nmemb, size_t size,
+patience_sort_indices_r (const void *base, size_t nmemb, size_t size,
                          int (*compar) (const void *,
                                         const void *,
                                         void *),
                          void *arg, size_t *result)
 {
-  sort (base, nmemb, size, compar, arg, result, NULL);
+  sort_out_of_place (base, nmemb, size, compar, arg, result, NULL);
 }
 
 void
-patience_sort_r (void *base, size_t nmemb, size_t size,
+patience_sort_r (const void *base, size_t nmemb, size_t size,
                  int (*compar) (const void *, const void *,
                                 void *),
                  void *arg, void *result)
 {
-  sort (base, nmemb, size, compar, arg, NULL,
-        (result != NULL) ? result : base);
+  sort_out_of_place (base, nmemb, size, compar, arg, NULL, result);
+}
+
+void
+patience_sort_in_place_r (void *base, size_t nmemb, size_t size,
+                          int (*compar) (const void *, const void *,
+                                         void *),
+                          void *arg)
+{
+  sort_in_place (base, nmemb, size, compar, arg);
 }

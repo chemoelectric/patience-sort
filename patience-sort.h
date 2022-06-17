@@ -18,22 +18,40 @@
 
 #include <stddef.h>
 
-void patience_sort_indices (void *base, size_t nmemb, size_t size,
+/* Sorts returning indices. */
+void patience_sort_indices (const void *base,
+                            size_t nmemb, size_t size,
                             int (*compar) (const void *,
                                            const void *),
                             size_t *result);
-
-void patience_sort_indices_r (void *base, size_t nmemb, size_t size,
+void patience_sort_indices_r (const void *base,
+                              size_t nmemb, size_t size,
                               int (*compar) (const void *,
                                              const void *,
                                              void *),
                               void *arg, size_t *result);
 
-void patience_sort (void *base, size_t nmemb, size_t size,
+/* Sorts with out-of-place results. */
+void patience_sort (const void *base,
+                    size_t nmemb, size_t size,
                     int (*compar) (const void *, const void *),
                     void *result);
-
-void patience_sort_r (void *base, size_t nmemb, size_t size,
+void patience_sort_r (const void *base,
+                      size_t nmemb, size_t size,
                       int (*compar) (const void *, const void *,
                                      void *),
                       void *arg, void *result);
+
+/* Sorts whose in-place results. It is unspecified whether the
+   elements are swapped around in-place or simply computed
+   out-of-place and then written into the original array. */
+void patience_sort_in_place (void *base,
+                             size_t nmemb, size_t size,
+                             int (*compar) (const void *,
+                                            const void *));
+void patience_sort_in_place_r (void *base,
+                               size_t nmemb, size_t size,
+                               int (*compar) (const void *,
+                                              const void *,
+                                              void *),
+                               void *arg);

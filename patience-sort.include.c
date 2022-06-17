@@ -45,7 +45,7 @@ next_power_of_two (size_t i)
 }
 
 static size_t
-find_pile (void *base, size_t size, compar_t *compar,
+find_pile (const void *base, size_t size, compar_t *compar,
            void *arg, size_t num_piles, const size_t *piles,
            size_t q)
 {
@@ -110,7 +110,7 @@ find_pile (void *base, size_t size, compar_t *compar,
 }
 
 static size_t
-find_last_elem (void *base, size_t size, compar_t *compar,
+find_last_elem (const void *base, size_t size, compar_t *compar,
                 void *arg, size_t num_piles, const size_t *last_elems,
                 size_t q)
 {
@@ -175,7 +175,7 @@ find_last_elem (void *base, size_t size, compar_t *compar,
 }
 
 static void
-patience_sort_deal (void *base, size_t nmemb, size_t size,
+patience_sort_deal (const void *base, size_t nmemb, size_t size,
                     compar_t *compar, void *arg, size_t *num_piles,
                     size_t *piles, size_t *links,
                     size_t *last_elems, size_t *tails)
@@ -277,7 +277,7 @@ find_opponent (size_t i)
 }
 
 static size_t
-play_game (void *base, size_t size, compar_t *compar,
+play_game (const void *base, size_t size, compar_t *compar,
            void *arg, size_t i, size_t j,
            size_t winner_i, size_t winner_j)
 {
@@ -301,7 +301,7 @@ play_game (void *base, size_t size, compar_t *compar,
 }
 
 static void
-build_tree (void *base, size_t size, compar_t *compar,
+build_tree (const void *base, size_t size, compar_t *compar,
             void *arg, size_t total_external_nodes, size_t *winners)
 {
   for (size_t istart = total_external_nodes;
@@ -343,7 +343,7 @@ build_tree (void *base, size_t size, compar_t *compar,
 }
 
 static void
-replay_games (void *base, size_t size, compar_t *compar,
+replay_games (const void *base, size_t size, compar_t *compar,
               void *arg, size_t *winners, size_t i)
 {
   while (i != 1)
@@ -363,7 +363,7 @@ replay_games (void *base, size_t size, compar_t *compar,
 }
 
 static void
-merge (void *base, size_t nmemb, size_t size,
+merge (const void *base, size_t nmemb, size_t size,
        compar_t *compar, void *arg,
        size_t *piles, const size_t *links,
        size_t total_nodes, size_t *winners,
@@ -393,7 +393,7 @@ merge (void *base, size_t nmemb, size_t size,
 }
 
 static void
-k_way_merge (void *base, size_t nmemb, size_t size,
+k_way_merge (const void *base, size_t nmemb, size_t size,
              compar_t *compar, void *arg,
              size_t num_piles, size_t *piles,
              const size_t *links, size_t *winners,
@@ -445,7 +445,7 @@ xmalloc (size_t n)
 }
 
 static void
-sort_out_of_place (void *base, size_t nmemb, size_t size,
+sort_out_of_place (const void *base, size_t nmemb, size_t size,
                    compar_t *compar, void *arg,
                    size_t *indices, void *elements)
 {
@@ -519,33 +519,24 @@ sort_out_of_place (void *base, size_t nmemb, size_t size,
 }
 
 static void
-sort (void *base, size_t nmemb, size_t size,
-      compar_t *compar, void *arg,
-      size_t *indices, void *elements)
+sort_in_place (void *base, size_t nmemb, size_t size,
+               compar_t *compar, void *arg)
 {
-  /* Test for overlap between input and output arrays. */
-  if (((char *) base) <= ((char *) elements)
-      && ((char *) elements) < ((char *) base) + nmemb * size)
-    {
-      /* This branch is mostly for faking an in-place sort. */
+  /* Sort out of place, then move the result to the original array. */
 
-      if (nmemb * size <= LEN_THRESHOLD * sizeof (size_t))
-        {
-          char buffer[nmemb * size];
-          sort_out_of_place (base, nmemb, size, compar, arg,
-                             indices, buffer);
-          memcpy (elements, buffer, nmemb * size);
-        }
-      else
-        {
-          void *buffer = xmalloc (nmemb * size);
-          sort_out_of_place (base, nmemb, size, compar, arg,
-                             indices, buffer);
-          memcpy (elements, buffer, nmemb * size);
-          free (buffer);
-        }
+  if (nmemb * size <= LEN_THRESHOLD * sizeof (size_t))
+    {
+      char buffer[nmemb * size];
+      sort_out_of_place (base, nmemb, size, compar, arg,
+                         NULL, buffer);
+      memcpy (base, buffer, nmemb * size);
     }
   else
-    sort_out_of_place (base, nmemb, size, compar, arg,
-                       indices, elements);
+    {
+      void *buffer = xmalloc (nmemb * size);
+      sort_out_of_place (base, nmemb, size, compar, arg,
+                         NULL, buffer);
+      memcpy (base, buffer, nmemb * size);
+      free (buffer);
+    }
 }
