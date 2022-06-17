@@ -19024,7 +19024,8 @@ printf "%s\n" "$as_me: WARNING: Please consider installing and using GNU Make:
 
 }
 
-#AC_CONFIG_FILES([patience-sort.pc])
+ac_config_files="$ac_config_files patience-sort.pc"
+
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -20164,6 +20165,7 @@ do
     "libtool") CONFIG_COMMANDS="$CONFIG_COMMANDS libtool" ;;
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
     "GNUmakefile") CONFIG_FILES="$CONFIG_FILES GNUmakefile:Makefile.in" ;;
+    "patience-sort.pc") CONFIG_FILES="$CONFIG_FILES patience-sort.pc" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;
   esac

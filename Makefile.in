@@ -33,7 +33,7 @@
 #
 
 # aminclude_static.am generated automatically by Autoconf
-# from AX_AM_MACROS_STATIC on Thu Jun 16 17:20:05 CDT 2022
+# from AX_AM_MACROS_STATIC on Fri Jun 17 11:25:46 CDT 2022
 
 
 
@@ -133,14 +133,15 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/ax_ac_append_to_file.m4 \
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 DIST_COMMON = $(srcdir)/Makefile.am $(top_srcdir)/configure \
-	$(am__configure_deps) $(am__DIST_COMMON)
+	$(am__configure_deps) $(include_HEADERS) $(am__DIST_COMMON)
 am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
  configure.lineno config.status.lineno
 mkinstalldirs = $(install_sh) -d
-CONFIG_CLEAN_FILES =
+CONFIG_CLEAN_FILES = patience-sort.pc
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(libdir)" \
-	"$(DESTDIR)$(pkgconfigdir)" "$(DESTDIR)$(pkgincludedir)"
+	"$(DESTDIR)$(pkgconfigdir)" "$(DESTDIR)$(includedir)" \
+	"$(DESTDIR)$(pkgincludedir)"
 PROGRAMS = $(bin_PROGRAMS)
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
 am__vpath_adj = case $$p in \
@@ -227,7 +228,7 @@ am__can_run_installinfo = \
     *) (install-info --version) >/dev/null 2>&1;; \
   esac
 DATA = $(nodist_pkgconfig_DATA)
-HEADERS = $(nobase_nodist_pkginclude_HEADERS)
+HEADERS = $(include_HEADERS) $(nobase_nodist_pkginclude_HEADERS)
 am__tagged_files = $(HEADERS) $(SOURCES) $(TAGS_FILES) $(LISP)
 # Read a list of newline-separated strings from the standard input,
 # and print each of them once, without duplicates.  Input order is
@@ -423,7 +424,7 @@ TEST_LOGS = $(am__test_logs2:.test.log=.log)
 TEST_LOG_DRIVER = $(SHELL) $(top_srcdir)/build-aux/test-driver
 TEST_LOG_COMPILE = $(TEST_LOG_COMPILER) $(AM_TEST_LOG_FLAGS) \
 	$(TEST_LOG_FLAGS)
-am__DIST_COMMON = $(srcdir)/Makefile.in \
+am__DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/patience-sort.pc.in \
 	$(top_srcdir)/aminclude_static.am \
 	$(top_srcdir)/build-aux/compile \
 	$(top_srcdir)/build-aux/config.guess \
@@ -633,7 +634,9 @@ LDADD = $(CODE_COVERAGE_LIBS)
 #
 lib_LTLIBRARIES = libpatience-sort.la
 nobase_nodist_pkginclude_HEADERS = 
-nodist_pkgconfig_DATA = 
+
+#--------------------------------------------------------------------------
+nodist_pkgconfig_DATA = patience-sort.pc
 CODE_COVERAGE_IGNORE_PATTERN = /usr/include/* /usr/include/*/*
 
 #---------------------------------------------------------------------
@@ -649,6 +652,7 @@ escape = $(subst $$,\$$,$(subst ^,\^,$(subst ],\],$(subst [,\[,$(subst .,\.,$(su
 libpatience_sort_la_SOURCES = patience-sort.c patience-sort-r.c \
 	patience-sort.h
 libpatience_sort_la_DEPENDENCIES = patience-sort.include.c
+include_HEADERS = patience-sort.h
 tests_try_int_sort_SOURCES = tests/try-int-sort.c
 tests_try_int_sort_DEPENDENCIES = libpatience-sort.la
 tests_try_int_sort_CPPFLAGS = $(AM_CPPFLAGS)
@@ -692,6 +696,8 @@ $(top_srcdir)/configure: @MAINTAINER_MODE_TRUE@ $(am__configure_deps)
 $(ACLOCAL_M4): @MAINTAINER_MODE_TRUE@ $(am__aclocal_m4_deps)
 	$(am__cd) $(srcdir) && $(ACLOCAL) $(ACLOCAL_AMFLAGS)
 $(am__aclocal_m4_deps):
+patience-sort.pc: $(top_builddir)/config.status $(srcdir)/patience-sort.pc.in
+	cd $(top_builddir) && $(SHELL) ./config.status $@
 install-binPROGRAMS: $(bin_PROGRAMS)
 	@$(NORMAL_INSTALL)
 	@list='$(bin_PROGRAMS)'; test -n "$(bindir)" || list=; \
@@ -877,6 +883,27 @@ uninstall-nodist_pkgconfigDATA:
 	@list='$(nodist_pkgconfig_DATA)'; test -n "$(pkgconfigdir)" || list=; \
 	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
 	dir='$(DESTDIR)$(pkgconfigdir)'; $(am__uninstall_files_from_dir)
+install-includeHEADERS: $(include_HEADERS)
+	@$(NORMAL_INSTALL)
+	@list='$(include_HEADERS)'; test -n "$(includedir)" || list=; \
+	if test -n "$$list"; then \
+	  echo " $(MKDIR_P) '$(DESTDIR)$(includedir)'"; \
+	  $(MKDIR_P) "$(DESTDIR)$(includedir)" || exit 1; \
+	fi; \
+	for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  echo "$$d$$p"; \
+	done | $(am__base_list) | \
+	while read files; do \
+	  echo " $(INSTALL_HEADER) $$files '$(DESTDIR)$(includedir)'"; \
+	  $(INSTALL_HEADER) $$files "$(DESTDIR)$(includedir)" || exit $$?; \
+	done
+
+uninstall-includeHEADERS:
+	@$(NORMAL_UNINSTALL)
+	@list='$(include_HEADERS)'; test -n "$(includedir)" || list=; \
+	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
+	dir='$(DESTDIR)$(includedir)'; $(am__uninstall_files_from_dir)
 install-nobase_nodist_pkgincludeHEADERS: $(nobase_nodist_pkginclude_HEADERS)
 	@$(NORMAL_INSTALL)
 	@list='$(nobase_nodist_pkginclude_HEADERS)'; test -n "$(pkgincludedir)" || list=; \
@@ -1305,7 +1332,7 @@ install-EXTRAPROGRAMS: install-libLTLIBRARIES
 install-binPROGRAMS: install-libLTLIBRARIES
 
 installdirs:
-	for dir in "$(DESTDIR)$(bindir)" "$(DESTDIR)$(libdir)" "$(DESTDIR)$(pkgconfigdir)" "$(DESTDIR)$(pkgincludedir)"; do \
+	for dir in "$(DESTDIR)$(bindir)" "$(DESTDIR)$(libdir)" "$(DESTDIR)$(pkgconfigdir)" "$(DESTDIR)$(includedir)" "$(DESTDIR)$(pkgincludedir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: $(BUILT_SOURCES)
@@ -1375,7 +1402,8 @@ info: info-am
 
 info-am:
 
-install-data-am: install-nobase_nodist_pkgincludeHEADERS \
+install-data-am: install-includeHEADERS \
+	install-nobase_nodist_pkgincludeHEADERS \
 	install-nodist_pkgconfigDATA
 
 install-dvi: install-dvi-am
@@ -1426,7 +1454,8 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-binPROGRAMS uninstall-libLTLIBRARIES \
+uninstall-am: uninstall-binPROGRAMS uninstall-includeHEADERS \
+	uninstall-libLTLIBRARIES \
 	uninstall-nobase_nodist_pkgincludeHEADERS \
 	uninstall-nodist_pkgconfigDATA
 
@@ -1444,8 +1473,8 @@ uninstall-am: uninstall-binPROGRAMS uninstall-libLTLIBRARIES \
 	dvi-am html html-am info info-am install install-am \
 	install-binPROGRAMS install-data install-data-am install-dvi \
 	install-dvi-am install-exec install-exec-am install-html \
-	install-html-am install-info install-info-am \
-	install-libLTLIBRARIES install-man \
+	install-html-am install-includeHEADERS install-info \
+	install-info-am install-libLTLIBRARIES install-man \
 	install-nobase_nodist_pkgincludeHEADERS \
 	install-nodist_pkgconfigDATA install-pdf install-pdf-am \
 	install-ps install-ps-am install-strip installcheck \
@@ -1453,7 +1482,8 @@ uninstall-am: uninstall-binPROGRAMS uninstall-libLTLIBRARIES \
 	maintainer-clean-generic mostlyclean mostlyclean-compile \
 	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
 	recheck tags tags-am uninstall uninstall-am \
-	uninstall-binPROGRAMS uninstall-libLTLIBRARIES \
+	uninstall-binPROGRAMS uninstall-includeHEADERS \
+	uninstall-libLTLIBRARIES \
 	uninstall-nobase_nodist_pkgincludeHEADERS \
 	uninstall-nodist_pkgconfigDATA
 
@@ -1571,10 +1601,6 @@ distclean-local: code-coverage-dist-clean
 tests-clean:
 	-rm -f tests/*.$(OBJEXT)
 	-rm -f tests/*.sh
-
-#--------------------------------------------------------------------------
-
-#nodist_pkgconfig_DATA += patience-sort.pc
 
 #--------------------------------------------------------------------------
 # local variables:

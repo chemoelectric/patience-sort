@@ -1,0 +1,15 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+host=@host@
+package=@PACKAGE@
+version=@VERSION@
+
+CPPFLAGS=
+
+Name: ${package}
+Description: Patience sort
+Version: ${version}
+Libs: -L${libdir} -lpatience-sort
+Cflags: ${CPPFLAGS}

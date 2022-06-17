@@ -89,6 +89,9 @@ libpatience_sort_la_DEPENDENCIES =
 libpatience_sort_la_DEPENDENCIES += patience-sort.include.c
 EXTRA_DIST += patience-sort.include.c
 
+include_HEADERS =
+include_HEADERS += patience-sort.h
+
 #--------------------------------------------------------------------------
 
 TESTS =
@@ -111,7 +114,7 @@ tests-clean:
 
 #--------------------------------------------------------------------------
 
-#nodist_pkgconfig_DATA += patience-sort.pc
+nodist_pkgconfig_DATA += patience-sort.pc
 
 #--------------------------------------------------------------------------
 # local variables:
