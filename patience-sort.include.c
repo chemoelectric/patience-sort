@@ -433,11 +433,13 @@ xmalloc (size_t n)
   void *p = malloc (n);
   if (p == NULL)
     {
+      /* LCOV_EXCL_START */
       fprintf
         (stderr,
          "Memory exhausted while trying to allocate %zu bytes.\n",
          n);
       exit (1);
+      /* LCOV_EXCL_STOP */
     }
   return p;
 }

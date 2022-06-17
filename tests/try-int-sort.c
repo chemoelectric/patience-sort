@@ -148,11 +148,39 @@ test_random_arrays_fake_inplace2 ()
     }
 }
 
+static void
+test_random_arrays_indices ()
+{
+  for (size_t sz = 0; sz <= 1000000; sz = MAX (1, 10 * sz))
+    {
+      int *p1 = malloc (sz * sizeof (int));
+      int *p2 = malloc (sz * sizeof (int));
+      size_t *p3 = malloc (sz * sizeof (size_t));
+
+      for (size_t i = 0; i < sz; i += 1)
+        p1[i] = random_int (1, 1000);
+
+      for (size_t i = 0; i < sz; i += 1)
+        p2[i] = p1[i];
+      qsort (p2, sz, sizeof (int), intcmp);
+
+      patience_sort_indices (p1, sz, sizeof (int), intcmp, p3);
+
+      for (size_t i = 0; i < sz; i += 1)
+        assert (p2[i] == p1[p3[i]]);
+
+      free (p1);
+      free (p2);
+      free (p3);
+    }
+}
+
 int
 main (int argc, char *argv[])
 {
   test_random_arrays ();
   test_random_arrays_fake_inplace1 ();
   test_random_arrays_fake_inplace2 ();
+  test_random_arrays_indices ();
   return 0;
 }
