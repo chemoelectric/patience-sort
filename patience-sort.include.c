@@ -197,10 +197,10 @@ patience_sort_deal (void *base, size_t nmemb, size_t size,
 
   */
 
-  memset (piles, LINK_NIL, size * sizeof (size_t));
-  memset (links, LINK_NIL, size * sizeof (size_t));
-  memset (last_elems, LINK_NIL, size * sizeof (size_t));
-  memset (tails, LINK_NIL, size * sizeof (size_t));
+  memset (piles, LINK_NIL, nmemb * sizeof (size_t));
+  memset (links, LINK_NIL, nmemb * sizeof (size_t));
+  memset (last_elems, LINK_NIL, nmemb * sizeof (size_t));
+  memset (tails, LINK_NIL, nmemb * sizeof (size_t));
   size_t m = 0;
 
   for (size_t q = nmemb; q != 0; q -= 1)
@@ -209,10 +209,10 @@ patience_sort_deal (void *base, size_t nmemb, size_t size,
                                   m, piles, q);
       if (i == m + 1)
         {
-/* FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME */
+/* FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME
           const size_t i = find_last_elem (base, size, compar, arg,
                                            m, last_elems, q);
-/* FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME */
+FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME */
           if (i == m + 1)
             {                   /* Start a new pile. */
               piles[m] = q;

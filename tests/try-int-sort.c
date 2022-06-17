@@ -82,15 +82,12 @@ test_random_arrays ()
 
       for (size_t i = 0; i < sz; i += 1)
         p1[i] = random_int (1, 1000);
-      printf("p1 = ");for (size_t i = 0; i < sz; i += 1) printf("%d ", p1[i]);printf("\n");
 
       for (size_t i = 0; i < sz; i += 1)
         p2[i] = p1[i];
       qsort (p2, sz, sizeof (int), intcmp);
-      printf("p2 = ");for (size_t i = 0; i < sz; i += 1) printf("%d ", p2[i]);printf("\n");
 
       patience_sort (p1, sz, sizeof (int), intcmp, p3);
-      printf("p3 = ");for (size_t i = 0; i < sz; i += 1) printf("%d ", p3[i]);printf("\n");
 
       for (size_t i = 0; i < sz; i += 1)
         assert (p2[i] == p3[i]);
@@ -100,36 +97,6 @@ test_random_arrays ()
       free (p3);
     }
 }
-  /*       implement */
-  /*       array_quicksort$cmp<int> (x, y) = */
-  /*         if x < y then */
-  /*           ~1 */
-  /*         else if x > y then */
-  /*           1 */
-  /*         else */
-  /*           0 */
-
-  /*       implement */
-  /*       array_initize$init<int> (i, x) = */
-  /*         x := random_int (1, 1000) */
-
-  /*       val @(pf1, pfgc1 | p1) = array_ptr_alloc<int> sz */
-  /*       val () = array_initize<int> (!p1, sz) */
-
-  /*       val @(pf2, pfgc2 | p2) = array_ptr_alloc<int> sz */
-  /*       val () = array_copy<int> (!p2, !p1, sz) */
-  /*       val () = array_quicksort<int> (!p2, sz) */
-  /*       val lst2 = list_vt2t (array2list (!p2, sz)) */
-
-  /*       val @(pf3, pfgc3 | p3) = patience_sort<int> (!p1, sz) */
-  /*       val lst3 = list_vt2t (array2list (!p3, sz)) */
-  /*     in */
-  /*       assertloc (lst2 = lst3); */
-  /*       array_ptr_free (pf1, pfgc1 | p1); */
-  /*       array_ptr_free (pf2, pfgc2 | p2); */
-  /*       array_ptr_free (pf3, pfgc3 | p3) */
-  /*     end */
-  /* end */
 
 int
 main (int argc, char *argv[])

@@ -1566,7 +1566,7 @@ code-coverage-capture-hook:
 @GNU@ include $(top_srcdir)/silent-rules.mk
 
 clean-local: code-coverage-clean tests-clean
-distclean-local: code-coverage-dist-clean ats-includes-distclean
+distclean-local: code-coverage-dist-clean
 
 tests-clean:
 	-rm -f tests/*.$(OBJEXT)

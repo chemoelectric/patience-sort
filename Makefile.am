@@ -61,7 +61,7 @@ CODE_COVERAGE_IGNORE_PATTERN += /usr/include/*
 CODE_COVERAGE_IGNORE_PATTERN += /usr/include/*/*
 
 clean-local: code-coverage-clean tests-clean
-distclean-local: code-coverage-dist-clean ats-includes-distclean
+distclean-local: code-coverage-dist-clean
 
 #---------------------------------------------------------------------
 #
