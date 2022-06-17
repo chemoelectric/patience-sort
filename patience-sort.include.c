@@ -80,8 +80,8 @@ find_pile (void *base, size_t size, compar_t *compar,
         {
           const size_t i1 = q - 1;
           const size_t i2 = piles[j] - 1;
-          const int cmp = COMPAR ((char *) base + i2 * size,
-                                  (char *) base + i1 * size,
+          const int cmp = COMPAR (((char *) base) + i2 * size,
+                                  ((char *) base) + i1 * size,
                                   arg);
           const size_t i = j + ((k - j) >> 1);
           if (cmp < 0)
@@ -96,8 +96,8 @@ find_pile (void *base, size_t size, compar_t *compar,
         {
           const size_t i1 = q - 1;
           const size_t i2 = piles[j] - 1;
-          const int cmp = COMPAR ((char *) base + i2 * size,
-                                  (char *) base + i1 * size,
+          const int cmp = COMPAR (((char *) base) + i2 * size,
+                                  ((char *) base) + i1 * size,
                                   arg);
           if (cmp < 0)
             retval = num_piles + 1;
@@ -291,8 +291,8 @@ play_game (void *base, size_t size, compar_t *compar,
     {
       const size_t i1 = winner_i - 1;
       const size_t i2 = winner_j - 1;
-      const int cmp = COMPAR ((char *) base + i2 * size,
-                              (char *) base + i1 * size,
+      const int cmp = COMPAR (((char *) base) + i2 * size,
+                              ((char *) base) + i1 * size,
                               arg);
       iwinner = (cmp < 0) ? j : i;
     }
@@ -375,8 +375,8 @@ merge (void *base, size_t nmemb, size_t size,
       if (indices != NULL)
         indices[isorted] = winner - 1;
       if (elements != NULL)
-        memcpy ((char *) elements + isorted * size,
-                (char *) base + (winner - 1) * size,
+        memcpy (((char *) elements) + isorted * size,
+                ((char *) base) + (winner - 1) * size,
                 size);
 
       /* Move to the next element in the winner’s pile. */
@@ -521,9 +521,12 @@ sort (void *base, size_t nmemb, size_t size,
       compar_t *compar, void *arg,
       size_t *indices, void *elements)
 {
-  if (elements == base)
+  /* Test for overlap between input and output arrays. */
+  if (((char *) base) <= ((char *) elements)
+      && ((char *) elements) < ((char *) base) + nmemb * size)
     {
-      /* Fake an in-place sort. */
+      /* This branch is mostly for faking an in-place sort. */
+
       if (nmemb * size <= LEN_THRESHOLD * sizeof (size_t))
         {
           char buffer[nmemb * size];
