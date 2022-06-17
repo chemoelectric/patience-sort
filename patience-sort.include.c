@@ -209,10 +209,8 @@ patience_sort_deal (void *base, size_t nmemb, size_t size,
                                   m, piles, q);
       if (i == m + 1)
         {
-/* FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME
           const size_t i = find_last_elem (base, size, compar, arg,
                                            m, last_elems, q);
-FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME */
           if (i == m + 1)
             {                   /* Start a new pile. */
               piles[m] = q;
