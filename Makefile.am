@@ -96,6 +96,7 @@ include_HEADERS += patience-sort.h
 
 TESTS =
 TESTS += tests/try-int-sort
+TESTS += tests/try-stable-sort
 
 EXTRA_PROGRAMS += tests/try-int-sort
 CLEANFILES += tests/try-int-sort
@@ -107,6 +108,17 @@ tests_try_int_sort_CPPFLAGS =
 tests_try_int_sort_CPPFLAGS += $(AM_CPPFLAGS)
 tests_try_int_sort_LDADD =
 tests_try_int_sort_LDADD += libpatience-sort.la
+
+EXTRA_PROGRAMS += tests/try-stable-sort
+CLEANFILES += tests/try-stable-sort
+tests_try_stable_sort_SOURCES =
+tests_try_stable_sort_SOURCES += tests/try-stable-sort.c
+tests_try_stable_sort_DEPENDENCIES =
+tests_try_stable_sort_DEPENDENCIES += libpatience-sort.la
+tests_try_stable_sort_CPPFLAGS =
+tests_try_stable_sort_CPPFLAGS += $(AM_CPPFLAGS)
+tests_try_stable_sort_LDADD =
+tests_try_stable_sort_LDADD += libpatience-sort.la
 
 tests-clean:
 	-rm -f tests/*.$(OBJEXT)

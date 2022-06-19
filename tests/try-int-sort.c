@@ -36,7 +36,7 @@
 uint64_t seed = 0;
 
 static double
-random_double ()
+random_double (void)
 {
   /* IEEE "binary64" or "double" has 52 bits of precision. We will
      take the high 48 bits of the seed and divide it by 2**48, to get
@@ -93,7 +93,7 @@ intcmp_r (const void *px, const void *py, void *reverse_order)
 }
 
 static void
-test_random_arrays ()
+test_random_arrays (void)
 {
   for (size_t sz = 0; sz <= 1000000; sz = MAX (1, 10 * sz))
     {
@@ -120,7 +120,7 @@ test_random_arrays ()
 }
 
 static void
-test_random_arrays_in_place ()
+test_random_arrays_in_place (void)
 {
   for (size_t sz = 0; sz <= 1000000; sz = MAX (1, 10 * sz))
     {
@@ -145,7 +145,7 @@ test_random_arrays_in_place ()
 }
 
 static void
-test_random_arrays_indices ()
+test_random_arrays_indices (void)
 {
   for (size_t sz = 0; sz <= 1000000; sz = MAX (1, 10 * sz))
     {
@@ -172,7 +172,7 @@ test_random_arrays_indices ()
 }
 
 static void
-test_random_arrays_r ()
+test_random_arrays_r (void)
 {
   for (size_t sz = 0; sz <= 1000000; sz = MAX (1, 10 * sz))
     {
@@ -201,7 +201,7 @@ test_random_arrays_r ()
 }
 
 static void
-test_random_arrays_r_reverse_order ()
+test_random_arrays_r_reverse_order (void)
 {
   for (size_t sz = 0; sz <= 1000000; sz = MAX (1, 10 * sz))
     {
@@ -230,7 +230,7 @@ test_random_arrays_r_reverse_order ()
 }
 
 static void
-test_random_arrays_in_place_r ()
+test_random_arrays_in_place_r (void)
 {
   for (size_t sz = 0; sz <= 1000000; sz = MAX (1, 10 * sz))
     {
@@ -257,7 +257,7 @@ test_random_arrays_in_place_r ()
 }
 
 static void
-test_random_arrays_in_place_r_reverse_order ()
+test_random_arrays_in_place_r_reverse_order (void)
 {
   for (size_t sz = 0; sz <= 1000000; sz = MAX (1, 10 * sz))
     {
@@ -284,7 +284,7 @@ test_random_arrays_in_place_r_reverse_order ()
 }
 
 static void
-test_random_arrays_indices_r ()
+test_random_arrays_indices_r (void)
 {
   for (size_t sz = 0; sz <= 1000000; sz = MAX (1, 10 * sz))
     {
@@ -313,7 +313,7 @@ test_random_arrays_indices_r ()
 }
 
 static void
-test_random_arrays_indices_r_reverse_order ()
+test_random_arrays_indices_r_reverse_order (void)
 {
   for (size_t sz = 0; sz <= 1000000; sz = MAX (1, 10 * sz))
     {

@@ -113,8 +113,9 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 bin_PROGRAMS =
-EXTRA_PROGRAMS = tests/try-int-sort$(EXEEXT)
-TESTS = tests/try-int-sort$(EXEEXT)
+EXTRA_PROGRAMS = tests/try-int-sort$(EXEEXT) \
+	tests/try-stable-sort$(EXEEXT)
+TESTS = tests/try-int-sort$(EXEEXT) tests/try-stable-sort$(EXEEXT)
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/ax_ac_append_to_file.m4 \
@@ -182,6 +183,9 @@ am__dirstamp = $(am__leading_dot)dirstamp
 am_tests_try_int_sort_OBJECTS =  \
 	tests/try_int_sort-try-int-sort.$(OBJEXT)
 tests_try_int_sort_OBJECTS = $(am_tests_try_int_sort_OBJECTS)
+am_tests_try_stable_sort_OBJECTS =  \
+	tests/try_stable_sort-try-stable-sort.$(OBJEXT)
+tests_try_stable_sort_OBJECTS = $(am_tests_try_stable_sort_OBJECTS)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -199,7 +203,8 @@ depcomp = $(SHELL) $(top_srcdir)/build-aux/depcomp
 am__maybe_remake_depfiles = depfiles
 am__depfiles_remade = ./$(DEPDIR)/patience-sort-r.Plo \
 	./$(DEPDIR)/patience-sort.Plo \
-	tests/$(DEPDIR)/try_int_sort-try-int-sort.Po
+	tests/$(DEPDIR)/try_int_sort-try-int-sort.Po \
+	tests/$(DEPDIR)/try_stable_sort-try-stable-sort.Po
 am__mv = mv -f
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
@@ -219,9 +224,10 @@ AM_V_CCLD = $(am__v_CCLD_@AM_V@)
 am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
-SOURCES = $(libpatience_sort_la_SOURCES) $(tests_try_int_sort_SOURCES)
+SOURCES = $(libpatience_sort_la_SOURCES) $(tests_try_int_sort_SOURCES) \
+	$(tests_try_stable_sort_SOURCES)
 DIST_SOURCES = $(libpatience_sort_la_SOURCES) \
-	$(tests_try_int_sort_SOURCES)
+	$(tests_try_int_sort_SOURCES) $(tests_try_stable_sort_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -620,7 +626,7 @@ AUTOMAKE_OPTIONS = foreign subdir-objects
 EXTRA_DIST = $(srcdir)/silent-rules.mk COPYING INSTALL README AUTHORS \
 	patience-sort.include.c
 MOSTLYCLEANFILES = 
-CLEANFILES = tests/try-int-sort
+CLEANFILES = tests/try-int-sort tests/try-stable-sort
 DISTCLEANFILES = Makefile GNUmakefile
 BUILT_SOURCES = 
 AM_CPPFLAGS = -I$(builddir) -I$(srcdir)
@@ -657,6 +663,10 @@ tests_try_int_sort_SOURCES = tests/try-int-sort.c
 tests_try_int_sort_DEPENDENCIES = libpatience-sort.la
 tests_try_int_sort_CPPFLAGS = $(AM_CPPFLAGS)
 tests_try_int_sort_LDADD = libpatience-sort.la
+tests_try_stable_sort_SOURCES = tests/try-stable-sort.c
+tests_try_stable_sort_DEPENDENCIES = libpatience-sort.la
+tests_try_stable_sort_CPPFLAGS = $(AM_CPPFLAGS)
+tests_try_stable_sort_LDADD = libpatience-sort.la
 all: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 
@@ -797,6 +807,12 @@ tests/try_int_sort-try-int-sort.$(OBJEXT): tests/$(am__dirstamp) \
 tests/try-int-sort$(EXEEXT): $(tests_try_int_sort_OBJECTS) $(tests_try_int_sort_DEPENDENCIES) $(EXTRA_tests_try_int_sort_DEPENDENCIES) tests/$(am__dirstamp)
 	@rm -f tests/try-int-sort$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(tests_try_int_sort_OBJECTS) $(tests_try_int_sort_LDADD) $(LIBS)
+tests/try_stable_sort-try-stable-sort.$(OBJEXT):  \
+	tests/$(am__dirstamp) tests/$(DEPDIR)/$(am__dirstamp)
+
+tests/try-stable-sort$(EXEEXT): $(tests_try_stable_sort_OBJECTS) $(tests_try_stable_sort_DEPENDENCIES) $(EXTRA_tests_try_stable_sort_DEPENDENCIES) tests/$(am__dirstamp)
+	@rm -f tests/try-stable-sort$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(tests_try_stable_sort_OBJECTS) $(tests_try_stable_sort_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -808,6 +824,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/patience-sort-r.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/patience-sort.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@tests/$(DEPDIR)/try_int_sort-try-int-sort.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@tests/$(DEPDIR)/try_stable_sort-try-stable-sort.Po@am__quote@ # am--include-marker
 
 $(am__depfiles_remade):
 	@$(MKDIR_P) $(@D)
@@ -852,6 +869,20 @@ tests/try_int_sort-try-int-sort.obj: tests/try-int-sort.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='tests/try-int-sort.c' object='tests/try_int_sort-try-int-sort.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tests_try_int_sort_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o tests/try_int_sort-try-int-sort.obj `if test -f 'tests/try-int-sort.c'; then $(CYGPATH_W) 'tests/try-int-sort.c'; else $(CYGPATH_W) '$(srcdir)/tests/try-int-sort.c'; fi`
+
+tests/try_stable_sort-try-stable-sort.o: tests/try-stable-sort.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tests_try_stable_sort_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT tests/try_stable_sort-try-stable-sort.o -MD -MP -MF tests/$(DEPDIR)/try_stable_sort-try-stable-sort.Tpo -c -o tests/try_stable_sort-try-stable-sort.o `test -f 'tests/try-stable-sort.c' || echo '$(srcdir)/'`tests/try-stable-sort.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) tests/$(DEPDIR)/try_stable_sort-try-stable-sort.Tpo tests/$(DEPDIR)/try_stable_sort-try-stable-sort.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='tests/try-stable-sort.c' object='tests/try_stable_sort-try-stable-sort.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tests_try_stable_sort_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o tests/try_stable_sort-try-stable-sort.o `test -f 'tests/try-stable-sort.c' || echo '$(srcdir)/'`tests/try-stable-sort.c
+
+tests/try_stable_sort-try-stable-sort.obj: tests/try-stable-sort.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tests_try_stable_sort_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT tests/try_stable_sort-try-stable-sort.obj -MD -MP -MF tests/$(DEPDIR)/try_stable_sort-try-stable-sort.Tpo -c -o tests/try_stable_sort-try-stable-sort.obj `if test -f 'tests/try-stable-sort.c'; then $(CYGPATH_W) 'tests/try-stable-sort.c'; else $(CYGPATH_W) '$(srcdir)/tests/try-stable-sort.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) tests/$(DEPDIR)/try_stable_sort-try-stable-sort.Tpo tests/$(DEPDIR)/try_stable_sort-try-stable-sort.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='tests/try-stable-sort.c' object='tests/try_stable_sort-try-stable-sort.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tests_try_stable_sort_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o tests/try_stable_sort-try-stable-sort.obj `if test -f 'tests/try-stable-sort.c'; then $(CYGPATH_W) 'tests/try-stable-sort.c'; else $(CYGPATH_W) '$(srcdir)/tests/try-stable-sort.c'; fi`
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -1136,6 +1167,13 @@ tests/try-int-sort.log: tests/try-int-sort$(EXEEXT)
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
+tests/try-stable-sort.log: tests/try-stable-sort$(EXEEXT)
+	@p='tests/try-stable-sort$(EXEEXT)'; \
+	b='tests/try-stable-sort'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
 .test.log:
 	@p='$<'; \
 	$(am__set_b); \
@@ -1386,6 +1424,7 @@ distclean: distclean-am
 		-rm -f ./$(DEPDIR)/patience-sort-r.Plo
 	-rm -f ./$(DEPDIR)/patience-sort.Plo
 	-rm -f tests/$(DEPDIR)/try_int_sort-try-int-sort.Po
+	-rm -f tests/$(DEPDIR)/try_stable_sort-try-stable-sort.Po
 	-rm -f GNUmakefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-libtool distclean-local distclean-tags
@@ -1438,6 +1477,7 @@ maintainer-clean: maintainer-clean-am
 		-rm -f ./$(DEPDIR)/patience-sort-r.Plo
 	-rm -f ./$(DEPDIR)/patience-sort.Plo
 	-rm -f tests/$(DEPDIR)/try_int_sort-try-int-sort.Po
+	-rm -f tests/$(DEPDIR)/try_stable_sort-try-stable-sort.Po
 	-rm -f GNUmakefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 
