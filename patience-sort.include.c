@@ -80,7 +80,7 @@ find_pile (const void *base, size_t size, compar_t *compar,
                                   ((char *) base) + i1 * size,
                                   arg);
           const size_t i = j + ((k - j) >> 1);
-          if (cmp < 0 || (cmp == 0 && i2 < i1))
+          if ((cmp < 0) | ((cmp == 0) * (i2 < i1)))
             j = i + 1;
           else
             k = i;
@@ -95,7 +95,7 @@ find_pile (const void *base, size_t size, compar_t *compar,
           const int cmp = COMPAR (((char *) base) + i2 * size,
                                   ((char *) base) + i1 * size,
                                   arg);
-          if (cmp < 0 || (cmp == 0 && i2 < i1))
+          if ((cmp < 0) | ((cmp == 0) * (i2 < i1)))
             retval = num_piles + 1;
           else
             retval = num_piles;
@@ -145,7 +145,7 @@ find_last_elem (const void *base, size_t size, compar_t *compar,
                                   (char *) base + i2 * size,
                                   arg);
           const size_t i = j + ((k - j) >> 1);
-          if (cmp < 0 || (cmp == 0 && i1 < i2))
+          if ((cmp < 0) | ((cmp == 0) * (i1 < i2)))
             j = i + 1;
           else
             k = i;
@@ -160,7 +160,7 @@ find_last_elem (const void *base, size_t size, compar_t *compar,
           const int cmp = COMPAR ((char *) base + i1 * size,
                                   (char *) base + i2 * size,
                                   arg);
-          if (cmp < 0 || (cmp == 0 && i1 < i2))
+          if ((cmp < 0) | ((cmp == 0) * (i1 < i2)))
             retval = num_piles + 1;
           else
             retval = 1;
@@ -290,7 +290,7 @@ play_game (const void *base, size_t size, compar_t *compar,
       const int cmp = COMPAR (((char *) base) + i2 * size,
                               ((char *) base) + i1 * size,
                               arg);
-      iwinner = (cmp < 0 || (cmp == 0 && i2 < i1)) ? j : i;
+      iwinner = ((cmp < 0) | ((cmp == 0) * (i2 < i1))) ? j : i;
     }
 
   return iwinner;
