@@ -26,13 +26,9 @@
 #define LINK  1
 
 #define LEN_THRESHOLD   128
-#define PILES_SIZE      128
-#define LINKS_SIZE      128
-#define WORKSPACE_SIZE  512
-
-_Static_assert (PILES_SIZE == LEN_THRESHOLD, "bad constants");
-_Static_assert (LINKS_SIZE == LEN_THRESHOLD, "bad constants");
-_Static_assert (WORKSPACE_SIZE == 4 * LEN_THRESHOLD, "bad constants");
+#define PILES_SIZE      LEN_THRESHOLD
+#define LINKS_SIZE      LEN_THRESHOLD
+#define WORKSPACE_SIZE  (4 * LEN_THRESHOLD)
 
 static size_t
 next_power_of_two (size_t i)
