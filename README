@@ -30,9 +30,10 @@ case.
 
 On data already sorted, this sort is likely to outperform the qsort of
 glibc (which is a fast implementation of quicksort). On random data,
-it is likely to underperform qsort, and to degrade in speed as the
-array to be sorted grows. But it does have ‘quasi-stability’, and it
-does not have to alter the original array.
+it is likely to underperform qsort considerably, and to degrade in
+speed as the array to be sorted grows. But it does have
+‘quasi-stability’, and it does not have to alter the original array.
 
 Also, I have not put effort into speeding this sort up. It is simply
-reasonably fast as a quick draft.
+reasonably fast as a quick draft. The k-way merge is probably the best
+candidate for speeding up.
