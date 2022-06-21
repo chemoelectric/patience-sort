@@ -40,7 +40,7 @@ next_power_of_two (size_t i)
   return j;
 }
 
-static size_t
+static inline size_t
 find_pile (const void *base, size_t size, compar_t *compar,
            void *arg, size_t num_piles, const size_t *piles,
            size_t q)
@@ -105,7 +105,7 @@ find_pile (const void *base, size_t size, compar_t *compar,
   return retval;
 }
 
-static size_t
+static inline size_t
 find_last_elem (const void *base, size_t size, compar_t *compar,
                 void *arg, size_t num_piles, const size_t *last_elems,
                 size_t q)
