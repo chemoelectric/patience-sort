@@ -26,10 +26,10 @@ This sort should perform O(n log n) in the worst case and O(n) in the
 best case.
 
 On data already sorted in either direction, this sort is likely to
-outperform the qsort of glibc by a factor. On random data, it is
-likely to underperform qsort considerably, and to degrade relative to
-qsort as the array to be sorted grows. But it does have
-‘quasi-stability’, and it does not have to alter the original array.
+outperform the qsort of glibc. On random data, it is likely to
+underperform qsort considerably, and to degrade relative to qsort as
+the array to be sorted grows. But it does have ‘quasi-stability’, and
+it does not have to alter the original array.
 
 Also, I have not put effort into speeding this sort up. It is simply
 reasonably fast as a quick draft. The k-way merge is probably the best
