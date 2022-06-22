@@ -35,3 +35,6 @@ Also, I have not put effort into speeding this sort up. It is simply
 reasonably fast as a quick draft. The k-way merge is probably the best
 candidate for speeding up. Ways to keep data in cache more also should
 be considered.
+
+Compared with a readily available implementation of timsort, this
+implementation of patience sort looks really, really bad. :)
