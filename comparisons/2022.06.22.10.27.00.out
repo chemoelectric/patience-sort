@@ -1,81 +1,81 @@
 Uniform random integers, size 0
-  patience sort :   0.000002
+  patience sort :   0.000001
   qsort         :   0.000002
 Uniform random integers, size 1
-  patience sort :   0.000006
+  patience sort :   0.000007
   qsort         :   0.000000
 Uniform random integers, size 10
   patience sort :   0.000003
   qsort         :   0.000002
 Uniform random integers, size 100
-  patience sort :   0.000017
+  patience sort :   0.000018
   qsort         :   0.000011
 Uniform random integers, size 1000
-  patience sort :   0.000222
+  patience sort :   0.000231
   qsort         :   0.000124
 Uniform random integers, size 10000
   patience sort :   0.003268
-  qsort         :   0.001410
+  qsort         :   0.001406
 Uniform random integers, size 100000
-  patience sort :   0.041476
-  qsort         :   0.015868
+  patience sort :   0.039837
+  qsort         :   0.015754
 Uniform random integers, size 1000000
-  patience sort :   0.584069
-  qsort         :   0.176652
+  patience sort :   0.580208
+  qsort         :   0.174955
 Uniform random integers, size 10000000
-  patience sort :  11.587205
-  qsort         :   1.965858
+  patience sort :  10.180866
+  qsort         :   1.933106
 Ascending integers, size 0
   patience sort :   0.000001
   qsort         :   0.000001
 Ascending integers, size 1
-  patience sort :   0.000003
+  patience sort :   0.000004
   qsort         :   0.000001
 Ascending integers, size 10
-  patience sort :   0.000002
-  qsort         :   0.000002
+  patience sort :   0.000001
+  qsort         :   0.000001
 Ascending integers, size 100
-  patience sort :   0.000021
+  patience sort :   0.000003
   qsort         :   0.000005
 Ascending integers, size 1000
-  patience sort :   0.000028
-  qsort         :   0.000043
+  patience sort :   0.000027
+  qsort         :   0.000039
 Ascending integers, size 10000
-  patience sort :   0.000259
-  qsort         :   0.000474
+  patience sort :   0.000247
+  qsort         :   0.000431
 Ascending integers, size 100000
-  patience sort :   0.002676
-  qsort         :   0.005510
+  patience sort :   0.002376
+  qsort         :   0.004895
 Ascending integers, size 1000000
-  patience sort :   0.034789
-  qsort         :   0.058743
+  patience sort :   0.031406
+  qsort         :   0.058020
 Ascending integers, size 10000000
-  patience sort :   0.314643
-  qsort         :   0.739498
+  patience sort :   0.297749
+  qsort         :   0.650814
 Descending integers, size 0
   patience sort :   0.000001
-  qsort         :   0.000002
-Descending integers, size 1
-  patience sort :   0.000003
   qsort         :   0.000001
+Descending integers, size 1
+  patience sort :   0.000002
+  qsort         :   0.000000
 Descending integers, size 10
-  patience sort :   0.000001
+  patience sort :   0.000002
   qsort         :   0.000001
 Descending integers, size 100
-  patience sort :   0.000013
-  qsort         :   0.000007
+  patience sort :   0.000004
+  qsort         :   0.000006
 Descending integers, size 1000
-  patience sort :   0.000034
-  qsort         :   0.000055
+  patience sort :   0.000032
+  qsort         :   0.000053
 Descending integers, size 10000
-  patience sort :   0.000321
-  qsort         :   0.000635
+  patience sort :   0.000295
+  qsort         :   0.000605
 Descending integers, size 100000
-  patience sort :   0.003329
-  qsort         :   0.007357
+  patience sort :   0.003419
+  qsort         :   0.007159
 Descending integers, size 1000000
-  patience sort :   0.038879
-  qsort         :   0.082315
+  patience sort :   0.037037
+  qsort         :   0.080644
 Descending integers, size 10000000
-  patience sort :   0.365178
-  qsort         :   0.975141
+  patience sort :   0.341208
+  qsort         :   0.945479
