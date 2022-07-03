@@ -1,0 +1,108 @@
+Uniform random integers, size 0
+  patience sort :   0.000002
+  timsort       :   0.000001
+  qsort         :   0.000001
+Uniform random integers, size 1
+  patience sort :   0.000006
+  timsort       :   0.000001
+  qsort         :   0.000001
+Uniform random integers, size 10
+  patience sort :   0.000003
+  timsort       :   0.000003
+  qsort         :   0.000001
+Uniform random integers, size 100
+  patience sort :   0.000019
+  timsort       :   0.000014
+  qsort         :   0.000011
+Uniform random integers, size 1000
+  patience sort :   0.000227
+  timsort       :   0.000118
+  qsort         :   0.000125
+Uniform random integers, size 10000
+  patience sort :   0.003230
+  timsort       :   0.001466
+  qsort         :   0.001501
+Uniform random integers, size 100000
+  patience sort :   0.039630
+  timsort       :   0.015718
+  qsort         :   0.015892
+Uniform random integers, size 1000000
+  patience sort :   0.546771
+  timsort       :   0.164483
+  qsort         :   0.178334
+Uniform random integers, size 10000000
+  patience sort :  11.399828
+  timsort       :   1.714510
+  qsort         :   1.950466
+Ascending integers, size 0
+  patience sort :   0.000001
+  timsort       :   0.000001
+  qsort         :   0.000001
+Ascending integers, size 1
+  patience sort :   0.000003
+  timsort       :   0.000000
+  qsort         :   0.000000
+Ascending integers, size 10
+  patience sort :   0.000002
+  timsort       :   0.000001
+  qsort         :   0.000001
+Ascending integers, size 100
+  patience sort :   0.000003
+  timsort       :   0.000002
+  qsort         :   0.000005
+Ascending integers, size 1000
+  patience sort :   0.000025
+  timsort       :   0.000004
+  qsort         :   0.000044
+Ascending integers, size 10000
+  patience sort :   0.000225
+  timsort       :   0.000040
+  qsort         :   0.000475
+Ascending integers, size 100000
+  patience sort :   0.002311
+  timsort       :   0.000387
+  qsort         :   0.005499
+Ascending integers, size 1000000
+  patience sort :   0.031122
+  timsort       :   0.003185
+  qsort         :   0.064405
+Ascending integers, size 10000000
+  patience sort :   0.309445
+  timsort       :   0.038231
+  qsort         :   0.643127
+Descending integers, size 0
+  patience sort :   0.000001
+  timsort       :   0.000001
+  qsort         :   0.000001
+Descending integers, size 1
+  patience sort :   0.000003
+  timsort       :   0.000001
+  qsort         :   0.000001
+Descending integers, size 10
+  patience sort :   0.000002
+  timsort       :   0.000001
+  qsort         :   0.000002
+Descending integers, size 100
+  patience sort :   0.000004
+  timsort       :   0.000003
+  qsort         :   0.000007
+Descending integers, size 1000
+  patience sort :   0.000039
+  timsort       :   0.000006
+  qsort         :   0.000053
+Descending integers, size 10000
+  patience sort :   0.000300
+  timsort       :   0.000047
+  qsort         :   0.000623
+Descending integers, size 100000
+  patience sort :   0.002985
+  timsort       :   0.000458
+  qsort         :   0.006911
+Descending integers, size 1000000
+  patience sort :   0.033652
+  timsort       :   0.004717
+  qsort         :   0.079924
+Descending integers, size 10000000
+  patience sort :   0.361641
+  timsort       :   0.044495
+  qsort         :   0.989385

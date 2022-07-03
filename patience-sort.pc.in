@@ -6,10 +6,8 @@ host=@host@
 package=@PACKAGE@
 version=@VERSION@
 
-CPPFLAGS=
-
 Name: ${package}
 Description: Patience sort
 Version: ${version}
 Libs: -L${libdir} -lpatience-sort
-Cflags: ${CPPFLAGS}
+Cflags: -I${includedir}

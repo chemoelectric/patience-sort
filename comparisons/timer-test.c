@@ -20,6 +20,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <time.h>
+#include <timsort.h>
 #include <patience-sort.h>
 
 /*------------------------------------------------------------------*/
@@ -90,6 +91,18 @@ time_patience_sort (size_t sz, int arr[sz])
 }
 
 clock_t
+time_timsort (size_t sz, int arr[sz])
+{
+  int *result = malloc (sz * sizeof (int));
+  for (size_t i = 0; i != sz; i += 1)
+    result[i] = arr[i];
+  clock_t t001 = clock ();
+  timsort (result, sz, sizeof (int), intcmp);
+  clock_t t002 = clock ();
+  return t002 - t001;
+}
+
+clock_t
 time_qsort (size_t sz, int arr[sz])
 {
   int *result = malloc (sz * sizeof (int));
@@ -110,6 +123,8 @@ time_uniform_random_array (size_t sz)
     arr[i] = random_int (1, 1000);
   long double tpat = time_patience_sort (sz, arr);
   printf ("  patience sort : %10.6Lf\n", tpat / CLOCKS_PER_SEC);
+  long double ttim = time_timsort (sz, arr);
+  printf ("  timsort       : %10.6Lf\n", ttim / CLOCKS_PER_SEC);
   long double tq = time_qsort (sz, arr);
   printf ("  qsort         : %10.6Lf\n", tq / CLOCKS_PER_SEC);
 }
@@ -123,6 +138,8 @@ time_ascending_array (size_t sz)
     arr[i] = i;
   long double tpat = time_patience_sort (sz, arr);
   printf ("  patience sort : %10.6Lf\n", tpat / CLOCKS_PER_SEC);
+  long double ttim = time_timsort (sz, arr);
+  printf ("  timsort       : %10.6Lf\n", ttim / CLOCKS_PER_SEC);
   long double tq = time_qsort (sz, arr);
   printf ("  qsort         : %10.6Lf\n", tq / CLOCKS_PER_SEC);
 }
@@ -136,6 +153,8 @@ time_descending_array (size_t sz)
     arr[i] = -i;
   long double tpat = time_patience_sort (sz, arr);
   printf ("  patience sort : %10.6Lf\n", tpat / CLOCKS_PER_SEC);
+  long double ttim = time_timsort (sz, arr);
+  printf ("  timsort       : %10.6Lf\n", ttim / CLOCKS_PER_SEC);
   long double tq = time_qsort (sz, arr);
   printf ("  qsort         : %10.6Lf\n", tq / CLOCKS_PER_SEC);
 }
